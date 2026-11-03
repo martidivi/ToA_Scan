@@ -7,8 +7,8 @@
 #include "TTree.h"
 
 // Costruttore
-Reader::Reader(const std::string& filename)
-    : filename(filename)
+Reader::Reader(const int& thr)
+    : thr(thr)
 {
 }
 
@@ -18,7 +18,8 @@ std::vector<Event> Reader::Read()
     // 1. Creiamo il contenitore in cui salveremo gli eventi
     std::vector<Event> events;
 
-    // 2. Apriamo il file ROOT
+    // 2. Creiamo il filename e apriamo il file ROOT
+    std::string filename = getfilename();
     TFile file(filename.c_str(), "READ");
 
     if (file.IsZombie()) {
@@ -26,7 +27,8 @@ std::vector<Event> Reader::Read()
     }
 
     // 3. Recuperiamo il TTree
-    TTree* tree = dynamic_cast<TTree*>(file.Get("data_tree"));
+    //TTree* tree = dynamic_cast<TTree*>(file.Get("data_tree"));
+    TTree* tree = dynamic_cast<TTree*>(file.Get("Event"));
 
     if (!tree) {
         throw std::runtime_error("TTree non trovato!");
@@ -38,25 +40,25 @@ std::vector<Event> Reader::Read()
     uint64_t trg_id;
     uint64_t num_hits;
 
-    std::vector<uint8_t>* of_Channel = nullptr;
-    std::vector<uint8_t>* of_Edge = nullptr;
+    uint8_t* of_Channel = nullptr;
+    uint8_t* of_Edge = nullptr;
     std::vector<uint16_t>* of_HitNumber = nullptr;
 
-    std::vector<double>* of_ToA = nullptr;
+    Double_t* of_ToA = nullptr;
     std::vector<double>* of_ToT = nullptr;
 
     // 5. Colleghiamo i branch alle variabili
-    tree->SetBranchAddress("Board", &ev_board);
+    /*tree->SetBranchAddress("Board", &ev_board);
     tree->SetBranchAddress("Timestamp", &ev_timestamp);
     tree->SetBranchAddress("TriggerID", &trg_id);
     tree->SetBranchAddress("NumberofHits", &num_hits);
+*/
+    tree->SetBranchAddress("FD01_channel", &of_Channel);
+    tree->SetBranchAddress("FD01_edge", &of_Edge);
+    //tree->SetBranchAddress("HitNumber", &of_HitNumber);
 
-    tree->SetBranchAddress("Hit_Channel", &of_Channel);
-    tree->SetBranchAddress("Edge", &of_Edge);
-    tree->SetBranchAddress("HitNumber", &of_HitNumber);
-
-    tree->SetBranchAddress("ToA", &of_ToA);
-    tree->SetBranchAddress("ToT", &of_ToT);
+    tree->SetBranchAddress("FD01_ToA", &of_ToA);
+    //tree->SetBranchAddress("ToT", &of_ToT);
 
     // 6. Scopriamo quanti eventi contiene il TTree
     Long64_t nEntries = tree->GetEntries();
