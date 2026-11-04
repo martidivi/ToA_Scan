@@ -44,34 +44,34 @@ void Analysis::MakeHistogram(int ch1, int ch2)
 
 
         // Scorriamo tutti i valori ToA dell'evento
-        //for (size_t i = 0; i < ev.toa.size(); i++) {
+        for (size_t i = 0; i < ev.toa.size(); i++) {
 
-        double value = ev.toa;
-        uint8_t channel = ev.channel;
-        uint8_t edge = ev.edge;
+            double value = ev.toa[i];
+            uint8_t channel = ev.channel[i];
+            uint8_t edge = ev.edge[i];
 
 
-        if((value>305)||(value<260)||(edge==1)){continue;}
+            if((value>305)||(value<260)||(edge==1)){continue;}
 
-        if((channel==ch1)&&(a==0)){
+            if((channel==ch1)&&(a==0)){
 
-            get_val1=value;
-            a=1;
-        }
-        
-        if((channel==ch2)&&(b==0)){
-
-           get_val2=value;
-           b=1;
-        }
-
-        if((a==1)&&(b==1)){
-
-            d_t.Fill(get_val1-get_val2);
-            break;
-        }
+                get_val1=value;
+                a=1;
+            }
             
+            if((channel==ch2)&&(b==0)){
 
+            get_val2=value;
+            b=1;
+            }
+
+            if((a==1)&&(b==1)){
+
+                d_t.Fill(get_val1-get_val2);
+                break;
+            }
+            
+        }
         
     }
 

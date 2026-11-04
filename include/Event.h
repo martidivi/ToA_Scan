@@ -11,11 +11,11 @@ struct Event {
     uint64_t triggerID;
     uint64_t numHits;
 
-    uint8_t channel;
-    uint8_t edge;
+    std::vector<uint8_t> channel;
+    std::vector<uint8_t> edge;
     std::vector<uint16_t> hitNumber;
 
-    uint8_t toa;
+    std::vector<double> toa;
     std::vector<double> tot;
 
 };
